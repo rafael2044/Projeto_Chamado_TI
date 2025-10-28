@@ -1,0 +1,51 @@
+from datetime import datetime
+from typing import List
+
+from sqlalchemy import DateTime, ForeignKey, String, Text, func
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from chamados_ti.db.database import Base
+
+
+class Chamado(Base):
+    __tablename__ = 'chamado'
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    usuario_id: Mapped[int] = mapped_column(
+        ForeignKey('user.id', ondelete='CASCADE', onupdate='CASCADE')
+    )
+    titulo: Mapped[str] = mapped_column(String(255), nullable=False)
+    unidade_id: Mapped[int] = mapped_column(
+        ForeignKey('unidade.id', ondelete='CASCADE', onupdate='CASCADE')
+    )
+    setor: Mapped[str] = mapped_column(String(75), nullable=False)
+    modulo_id: Mapped[int] = mapped_column(
+        ForeignKey('modulo.id', ondelete='CASCADE', onupdate='CASCADE')
+    )
+    urgencia: Mapped[str] = mapped_column(String(20), nullable=False)
+    descricao: Mapped[str] = mapped_column(Text(), nullable=False)
+    status_id: Mapped[int] = mapped_column(
+        ForeignKey('status.id'),
+        nullable=False)
+    data_abertura: Mapped[datetime] = mapped_column(
+        DateTime,
+        nullable=False,
+        default=datetime.now()
+    )
+    data_fechamento: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    caminho_anexo: Mapped[str] = mapped_column(nullable=False)
+    tipo_anexo: Mapped[str] = mapped_column(String(20), nullable=False)
+
+    unidade: Mapped['Unidade'] = relationship(back_populates='chamados')
+    modulo: Mapped['Modulo'] = relationship(back_populates='chamados')
+    usuario: Mapped['User'] = relationship(back_populates='chamados')
+    status: Mapped['Status'] = relationship(back_populates='chamados')
+    atendimentos: Mapped[List['Atendimento']] = relationship(
+        back_populates='chamado')
+
+
+from chamados_ti.models.atendimento import Atendimento
+from chamados_ti.models.unidade import Unidade
+from chamados_ti.models.modulo import Modulo
+from chamados_ti.models.user import User
+from chamados_ti.models.status import Status
