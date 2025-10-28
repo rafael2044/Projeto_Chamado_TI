@@ -5,8 +5,7 @@ from sqlalchemy.orm import Session
 from api_chamados_ti.core.settings import Settings
 
 engine = create_engine(
-    Settings().DATABASE_URL,
-    connect_args={'check_same_thread': False}
+    Settings().DATABASE_URL
 )
 Base = declarative_base()
 
