@@ -48,7 +48,7 @@ class CRUDUser:
             )
 
     def get_user_by_id(self, session: Session, user_id: int) -> User:
-        user_db = session.scalar(select(User).where(User.id == user_id))
+        user_db = session.scalar(select(User).where(User.id == user_id).options(joinedload(User.privilegio)))
         if not user_db:
             raise HTTPException(
                 status_code=HTTPStatus.NOT_FOUND,
@@ -58,7 +58,7 @@ class CRUDUser:
         return user_db
     
     def get_user_by_username(self, session: Session, username: str) -> User:
-        user_db = session.scalar(select(User).where(User.username == username))
+        user_db = session.scalar(select(User).where(User.username == username).options(joinedload(User.privilegio)))
         if not user_db:
             raise HTTPException(
                 status_code=HTTPStatus.NOT_FOUND,
@@ -81,11 +81,10 @@ class CRUDUser:
         session.add(new_user)
         session.commit()
         session.refresh(new_user)
-        return new_user
+        return self.get_user_by_username(session, new_user.username)
 
     def insert_user(self, session: Session, user: UserCreate):
-        user_db = session.scalar(select(User).where(User.username == user.username))
-        if user_db:
+        if self.user_exists(session, user.username):
             raise HTTPException(
                 status_code=HTTPStatus.CONFLICT,
                 detail='Nome de usuário já existe'
@@ -99,7 +98,7 @@ class CRUDUser:
         session.add(new_user)
         session.commit()
         session.refresh(new_user)
-        return new_user
+        return self.get_user_by_username(session, new_user.username)
     
     def delete_user(self, session:Session, user_id: int):
         user_db = self.get_user_by_id(user_id)

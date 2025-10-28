@@ -50,7 +50,7 @@ const UsuarioPage = () => {
         };
         fetchPrivilegios();
         fetchUsuarios();
-    }, [currentPage]);
+    }, [currentPage, search]);
 
     const cadastrarUsuario = async (e) => {
 
@@ -124,7 +124,7 @@ const UsuarioPage = () => {
                             value={privilegio}
                             onChange={(e) => setPrivilegio(e.target.value)}
                         >
-                            {privilegios.map((p, index) => (
+                            {privilegios.map((p) => (
                                 <option value={p.id} key={p.id}>{p.nome}</option>
                             ))}
                         </select>

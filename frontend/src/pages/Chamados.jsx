@@ -110,7 +110,7 @@ const Chamados = () => {
       setData(prevData => ({
         ...prevData,
         chamados: prevData.chamados.map(
-        chamado => chamado.id == chamadoId
+        chamado => chamado.id === chamadoId
         ? {
           ...chamado,
           status: 'Concluído',

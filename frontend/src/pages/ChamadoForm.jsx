@@ -49,7 +49,7 @@ const ChamadoForm = () => {
       formData.append("file", arquivo);
       try {
           console.log(arquivo)
-          const response = await api.post(`/chamados/${chamadoId}/anexo`, formData, {
+          await api.post(`/chamados/${chamadoId}/anexo`, formData, {
             headers: { "Content-Type": "multipart/form-data" },
           })
       } catch (err) {
