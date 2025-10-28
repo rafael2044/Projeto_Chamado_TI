@@ -21,8 +21,6 @@ router = APIRouter(tags=['Auth'])
 
 @router.post('/register', response_model=UserResponse)
 def register_user(user: UserRegister, session: Session = Depends(get_session)):
-    if crud_user.user_exists(user.username):
-        raise HTTPException(status_code=400, detail='Usuário já existe')
     
     new_user = crud_user.register_user(session, user)
     

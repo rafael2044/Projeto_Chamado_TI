@@ -67,8 +67,7 @@ class CRUDUser:
         return user_db
     
     def register_user(self, session: Session, user: UserRegister) -> User:
-        user_db = session.scalar(select(User).where(User.username == user.username))
-        if user_db:
+        if self.user_exists(session, user.username):
             raise HTTPException(
                 status_code=HTTPStatus.CONFLICT,
                 detail='Nome de usuário já existe'
