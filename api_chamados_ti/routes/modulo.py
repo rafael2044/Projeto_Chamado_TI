@@ -3,11 +3,11 @@ from http import HTTPStatus
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from chamados_ti.core.security import JWTBearer, require_privilegio
-from chamados_ti.db.database import get_session
-from chamados_ti.schemas.moduloRequest import ModuloRequest
-from chamados_ti.schemas.moduloResponse import ModuloResponse
-from chamados_ti.crud.modulo import crud_modulo as crud
+from api_chamados_ti.core.security import JWTBearer, require_privilegio
+from api_chamados_ti.db.database import get_session
+from api_chamados_ti.schemas.moduloRequest import ModuloRequest
+from api_chamados_ti.schemas.moduloResponse import ModuloResponse
+from api_chamados_ti.crud.modulo import crud_modulo as crud
 
 
 router = APIRouter(prefix='/modulo', tags=['Modulo'])

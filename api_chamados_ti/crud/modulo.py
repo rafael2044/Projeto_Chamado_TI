@@ -4,9 +4,9 @@ from fastapi import HTTPException
 from http import HTTPStatus
 
 
-from chamados_ti.schemas.moduloRequest import ModuloRequest
-from chamados_ti.schemas.moduloResponse import ModuloResponse
-from chamados_ti.models.modulo import Modulo
+from api_chamados_ti.schemas.moduloRequest import ModuloRequest
+from api_chamados_ti.schemas.moduloResponse import ModuloResponse
+from api_chamados_ti.models.modulo import Modulo
 
 
 class CRUDModulo:

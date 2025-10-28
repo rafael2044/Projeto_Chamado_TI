@@ -4,7 +4,7 @@ from typing import List
 from sqlalchemy import DateTime, ForeignKey, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from chamados_ti.db.database import Base
+from api_chamados_ti.db.database import Base
 
 
 class Chamado(Base):
@@ -44,8 +44,8 @@ class Chamado(Base):
         back_populates='chamado')
 
 
-from chamados_ti.models.atendimento import Atendimento
-from chamados_ti.models.unidade import Unidade
-from chamados_ti.models.modulo import Modulo
-from chamados_ti.models.user import User
-from chamados_ti.models.status import Status
+from api_chamados_ti.models.atendimento import Atendimento
+from api_chamados_ti.models.unidade import Unidade
+from api_chamados_ti.models.modulo import Modulo
+from api_chamados_ti.models.user import User
+from api_chamados_ti.models.status import Status

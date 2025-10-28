@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from chamados_ti.schemas.privilegioResponse import PrivilegioResponse
+from api_chamados_ti.schemas.privilegioResponse import PrivilegioResponse
 
 
 class UserResponse(BaseModel):

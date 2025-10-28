@@ -4,8 +4,8 @@ from fastapi import HTTPException
 from http import HTTPStatus
 
 
-from chamados_ti.schemas.unidadeRequest import UnidadeRequest
-from chamados_ti.models.unidade import Unidade
+from api_chamados_ti.schemas.unidadeRequest import UnidadeRequest
+from api_chamados_ti.models.unidade import Unidade
 
 
 class CRUDUnidade:

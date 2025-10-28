@@ -3,8 +3,8 @@ from typing import List
 from sqlalchemy import Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from chamados_ti.db.database import Base
-from chamados_ti.models.user import User
+from api_chamados_ti.db.database import Base
+from api_chamados_ti.models.user import User
 
 
 class Privilegio(Base):

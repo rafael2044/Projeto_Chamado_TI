@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from typing import List
 
-from chamados_ti.schemas.userResponse import UserResponse
+from api_chamados_ti.schemas.userResponse import UserResponse
 
 class UsersResponse(BaseModel):
     users: List[UserResponse]

@@ -3,10 +3,10 @@ from fastapi import APIRouter, Depends
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from chamados_ti.core.security import JWTBearer, require_privilegio
-from chamados_ti.db.database import get_session
-from chamados_ti.models.privilegio import Privilegio
-from chamados_ti.schemas.privilegioResponse import PrivilegioResponse
+from api_chamados_ti.core.security import JWTBearer, require_privilegio
+from api_chamados_ti.db.database import get_session
+from api_chamados_ti.models.privilegio import Privilegio
+from api_chamados_ti.schemas.privilegioResponse import PrivilegioResponse
 
 router = APIRouter(prefix='/privilegio', tags=['Privilegio'])
 

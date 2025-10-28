@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from typing import List
 
-from chamados_ti.schemas.chamadoResponse import ChamadoResponse
+from api_chamados_ti.schemas.chamadoResponse import ChamadoResponse
 
 class ChamadosResponse(BaseModel):
     chamados: List[ChamadoResponse]

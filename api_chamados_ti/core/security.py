@@ -8,9 +8,9 @@ from sqlalchemy.orm import Session
 from pydantic import ValidationError
 from typing import Any
 
-from chamados_ti.db.database import get_session
-from chamados_ti.core.settings import Settings
-from chamados_ti.models.user import User
+from api_chamados_ti.db.database import get_session
+from api_chamados_ti.core.settings import Settings
+from api_chamados_ti.models.user import User
 
 SECRET_KEY = Settings().SECRET_KEY
 ALGORITHM = 'HS256'

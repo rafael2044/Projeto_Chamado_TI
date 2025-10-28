@@ -2,19 +2,19 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 
-from chamados_ti.core.security import (
+from api_chamados_ti.core.security import (
     create_access_token,
     create_refresh_token,
     verify_password,
     verify_token
 )
-from chamados_ti.db.database import get_session
-from chamados_ti.schemas.token import Token
-from chamados_ti.schemas.tokenRefreshRequest import TokenRefreshRequest
-from chamados_ti.schemas.userLogin import UserLogin
-from chamados_ti.schemas.userRegister import UserRegister
-from chamados_ti.schemas.userResponse import UserResponse
-from chamados_ti.crud.user import crud_user
+from api_chamados_ti.db.database import get_session
+from api_chamados_ti.schemas.token import Token
+from api_chamados_ti.schemas.tokenRefreshRequest import TokenRefreshRequest
+from api_chamados_ti.schemas.userLogin import UserLogin
+from api_chamados_ti.schemas.userRegister import UserRegister
+from api_chamados_ti.schemas.userResponse import UserResponse
+from api_chamados_ti.crud.user import crud_user
 
 router = APIRouter(tags=['Auth'])
 

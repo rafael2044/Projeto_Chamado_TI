@@ -6,14 +6,14 @@ from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
-from chamados_ti.core.security import JWTBearer, get_current_user, require_privilegio
-from chamados_ti.db.database import get_session
-from chamados_ti.models.chamado import Chamado
-from chamados_ti.models.user import User
-from chamados_ti.crud.chamado import crud_chamado as crud
-from chamados_ti.schemas.chamadoRequest import ChamadoRequest
-from chamados_ti.schemas.chamadoResponse import ChamadoResponse
-from chamados_ti.schemas.chamadosResponse import ChamadosResponse
+from api_chamados_ti.core.security import JWTBearer, get_current_user, require_privilegio
+from api_chamados_ti.db.database import get_session
+from api_chamados_ti.models.chamado import Chamado
+from api_chamados_ti.models.user import User
+from api_chamados_ti.crud.chamado import crud_chamado as crud
+from api_chamados_ti.schemas.chamadoRequest import ChamadoRequest
+from api_chamados_ti.schemas.chamadoResponse import ChamadoResponse
+from api_chamados_ti.schemas.chamadosResponse import ChamadosResponse
 
 
 router = APIRouter(prefix='/chamados', tags=['Chamados'])

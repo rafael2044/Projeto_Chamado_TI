@@ -3,8 +3,8 @@ from datetime import datetime
 from sqlalchemy import ForeignKey, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from chamados_ti.db.database import Base
-from chamados_ti.models.user import User
+from api_chamados_ti.db.database import Base
+from api_chamados_ti.models.user import User
 
 
 class Atendimento(Base):
@@ -20,5 +20,5 @@ class Atendimento(Base):
     anexo: Mapped['AnexoAtendimento'] = relationship(back_populates='atendimento')
 
 
-from chamados_ti.models.chamado import Chamado
-from chamados_ti.models.anexo_atendimento import AnexoAtendimento
+from api_chamados_ti.models.chamado import Chamado
+from api_chamados_ti.models.anexo_atendimento import AnexoAtendimento

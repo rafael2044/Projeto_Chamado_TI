@@ -4,10 +4,10 @@ from fastapi import HTTPException
 from http import HTTPStatus
 
 
-from chamados_ti.schemas.userCreate import UserCreate
-from chamados_ti.schemas.userRegister import UserRegister
-from chamados_ti.models.user import User
-from chamados_ti.core.security import hash_password
+from api_chamados_ti.schemas.userCreate import UserCreate
+from api_chamados_ti.schemas.userRegister import UserRegister
+from api_chamados_ti.models.user import User
+from api_chamados_ti.core.security import hash_password
 
 
 class CRUDUser:

@@ -4,9 +4,9 @@ from fastapi import HTTPException, UploadFile, File
 from http import HTTPStatus
 import os
 
-from chamados_ti.models.atendimento import Atendimento
-from chamados_ti.models.anexo_atendimento import AnexoAtendimento
-from chamados_ti.crud.chamado import crud_chamado
+from api_chamados_ti.models.atendimento import Atendimento
+from api_chamados_ti.models.anexo_atendimento import AnexoAtendimento
+from api_chamados_ti.crud.chamado import crud_chamado
 
 UPLOAD_DIR = 'uploads/'
 

@@ -3,7 +3,7 @@ from typing import List
 from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from chamados_ti.db.database import Base
+from api_chamados_ti.db.database import Base
 
 
 class User(Base):
@@ -26,6 +26,6 @@ class User(Base):
         back_populates='suporte')
 
 
-from chamados_ti.models.atendimento import Atendimento
-from chamados_ti.models.chamado import Chamado
-from chamados_ti.models.privilegio import Privilegio
+from api_chamados_ti.models.atendimento import Atendimento
+from api_chamados_ti.models.chamado import Chamado
+from api_chamados_ti.models.privilegio import Privilegio

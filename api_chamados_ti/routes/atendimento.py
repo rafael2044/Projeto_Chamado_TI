@@ -6,14 +6,14 @@ from fastapi.responses import FileResponse
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from chamados_ti.core.security import JWTBearer, get_current_user, require_privilegio
-from chamados_ti.db.database import get_session
-from chamados_ti.models.anexo_atendimento import AnexoAtendimento
-from chamados_ti.models.atendimento import Atendimento
-from chamados_ti.models.chamado import Chamado
-from chamados_ti.models.user import User
-from chamados_ti.schemas.atendimentoResponse import AtendimentoResponse
-from chamados_ti.crud.atendimento import crud_atendimento as crud
+from api_chamados_ti.core.security import JWTBearer, get_current_user, require_privilegio
+from api_chamados_ti.db.database import get_session
+from api_chamados_ti.models.anexo_atendimento import AnexoAtendimento
+from api_chamados_ti.models.atendimento import Atendimento
+from api_chamados_ti.models.chamado import Chamado
+from api_chamados_ti.models.user import User
+from api_chamados_ti.schemas.atendimentoResponse import AtendimentoResponse
+from api_chamados_ti.crud.atendimento import crud_atendimento as crud
 
 router = APIRouter(prefix='/atendimento', tags=['Atendimento'])
 

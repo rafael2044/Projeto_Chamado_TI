@@ -2,8 +2,8 @@ from fastapi import FastAPI
 from sqlalchemy.exc import OperationalError
 from fastapi.middleware.cors import CORSMiddleware
 
-from chamados_ti.db.database import Base, engine
-from chamados_ti.routes import (
+from api_chamados_ti.db.database import Base, engine
+from api_chamados_ti.routes import (
     atendimento,
     auth,
     chamados,
@@ -12,7 +12,7 @@ from chamados_ti.routes import (
     unidade,
     user,
 )
-from chamados_ti.core.exception_handlers import db_connection_exception_handler
+from api_chamados_ti.core.exception_handlers import db_connection_exception_handler
 
 Base.metadata.create_all(bind=engine)
 

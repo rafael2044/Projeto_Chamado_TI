@@ -3,7 +3,7 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from chamados_ti.schemas.atendimentoResponse import AtendimentoResponse
+from api_chamados_ti.schemas.atendimentoResponse import AtendimentoResponse
 
 
 class ChamadoResponse(BaseModel):

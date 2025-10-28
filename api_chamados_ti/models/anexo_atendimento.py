@@ -1,8 +1,8 @@
 from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from chamados_ti.db.database import Base
-from chamados_ti.models.atendimento import Atendimento
+from api_chamados_ti.db.database import Base
+from api_chamados_ti.models.atendimento import Atendimento
 
 
 class AnexoAtendimento(Base):

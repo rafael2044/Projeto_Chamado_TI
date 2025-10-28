@@ -3,12 +3,12 @@ from http import HTTPStatus
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from chamados_ti.core.security import JWTBearer, require_privilegio
-from chamados_ti.db.database import get_session
-from chamados_ti.schemas.userCreate import UserCreate
-from chamados_ti.schemas.usersResponse import UsersResponse
-from chamados_ti.schemas.userResponse import UserResponse
-from chamados_ti.crud.user import crud_user as crud
+from api_chamados_ti.core.security import JWTBearer, require_privilegio
+from api_chamados_ti.db.database import get_session
+from api_chamados_ti.schemas.userCreate import UserCreate
+from api_chamados_ti.schemas.usersResponse import UsersResponse
+from api_chamados_ti.schemas.userResponse import UserResponse
+from api_chamados_ti.crud.user import crud_user as crud
 
 router = APIRouter(prefix='/user', tags=['User'])
 

@@ -6,8 +6,8 @@ from http import HTTPStatus
 import os
 
 
-from chamados_ti.schemas.chamadoRequest import ChamadoRequest
-from chamados_ti.models.chamado import Chamado
+from api_chamados_ti.schemas.chamadoRequest import ChamadoRequest
+from api_chamados_ti.models.chamado import Chamado
 
 UPLOAD_DIR = 'uploads/'
 
