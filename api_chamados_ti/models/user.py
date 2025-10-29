@@ -16,7 +16,7 @@ class User(Base):
         nullable=False
     )
     hashed_password: Mapped[str] = mapped_column(nullable=False)
-    privilegio_id: Mapped[int] = mapped_column(ForeignKey('privilegio.id'))
+    privilegio_id: Mapped[int] = mapped_column(ForeignKey('privilegio.id'), nullable=False)
 
     privilegio: Mapped['Privilegio'] = relationship(
         back_populates='usuarios')

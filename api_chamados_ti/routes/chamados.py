@@ -76,7 +76,6 @@ def get_anexo(chamado_id: int, session: Session = Depends(get_session)):
 @router.post(
     '/',
     dependencies=[Depends(JWTBearer())],
-    response_model=ChamadoResponse,
     status_code=HTTPStatus.CREATED
 )
 def criar_chamado(
@@ -85,20 +84,7 @@ def criar_chamado(
     current_user: User = Depends(get_current_user)
 ):
     new_chamado = crud.insert_chamado(session, chamado, current_user.id)
-    return {
-        'id': new_chamado.id,
-        'titulo': new_chamado.titulo,
-        'unidade': new_chamado.unidade.nome | '---',
-        'setor': new_chamado.setor,
-        'modulo': new_chamado.modulo.nome | '---',
-        'urgencia': new_chamado.urgencia,
-        'descricao': new_chamado.descricao,
-        'status': new_chamado.status.nome,
-        'anexo': True if new_chamado.caminho_anexo else False,
-        'data_abertura': new_chamado.data_abertura,
-        'data_fechamento': new_chamado.data_fechamento,
-        'solicitante': new_chamado.usuario.username | '---'
-    }
+    return {'chamado_id': new_chamado.id, 'message': f'Chamado #{new_chamado.id} aberto com sucesso'}
 
 
 @router.post('/{chamado_id}/anexo', dependencies=[Depends(JWTBearer())], status_code=HTTPStatus.CREATED)
@@ -111,7 +97,7 @@ async def upload_anexo(
     
     session.commit()
 
-    return {'message': 'Arquivo enviado com sucesso', 'arquivo': chamado_db.caminho_anexo}
+    return {'message': 'Arquivo enviado com sucesso'}
 
 
 @router.patch(
@@ -123,8 +109,9 @@ async def upload_anexo(
 def finalizar_chamado(chamado_id: int,
                       session: Session = Depends(get_session)):
     
-    chamado_update = crud.update_chamado(session, chamado_id, {'status_id': 3, 'data_fechamento': datetime.now()})
+    chamado_db= crud.finalizar_chamado(session, chamado_id)
 
     return {
-        'data_fechamento': chamado_update.data_fechamento
+        'message': f'Chamado #{chamado_id} finalizado com sucesso',
+        'data_fechamento': chamado_db.data_fechamento
     }

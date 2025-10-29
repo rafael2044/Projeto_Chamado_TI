@@ -6,6 +6,7 @@ import ToastMessage from "../components/ToastMessage";
 const ModuloPage = () => {
     const [nome, setNome] = useState("")
     const [modulos, setModulos] = useState([])
+    const [loading, setLoading] = useState(true)
     const [toast, setToast] = useState({
         show: false,
         message: "",
@@ -22,9 +23,11 @@ const ModuloPage = () => {
             try {
                 const res = await api.get("/modulo/");
                 setModulos(res.data);
+                setLoading(false)
             } catch (err) {
                 console.error(err);
                 showToast("Erro ao carregar modulos", "error")
+                setLoading(false)
             }
         };
         fetchModulos();
@@ -57,6 +60,15 @@ const ModuloPage = () => {
         }
     };
 
+    if (loading) {
+    return (
+      <div className="d-flex justify-content-center py-5">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Carregando...</span>
+        </div>
+      </div>
+    );
+    }
 
     return (
         <div className="container mt-5">

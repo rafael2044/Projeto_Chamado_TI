@@ -11,6 +11,7 @@ const UsuarioPage = () => {
     const [privilegio, setPrivilegio] = useState(1);
     const [privilegios, setPrivilegios] = useState([])
     const [currentPage, setCurrentPage] = useState(1)
+    const [loading, setLoading] = useState(true)
     const [data, setData] = useState({
         users: [],
         total: 0,
@@ -43,8 +44,10 @@ const UsuarioPage = () => {
             try {
                 const res = await api.get(`/user/?offset=${currentPage}&limit=${ITEMS_PER_PAGE}&search=${search}`);
                 setData(res.data);
+                setLoading(false)
             } catch (err) {
                 console.error(err);
+                setLoading(false)
                 showToast("Erro ao carregar usuários", "error")
             }
         };
@@ -92,6 +95,15 @@ const UsuarioPage = () => {
         setCurrentPage(1); // Reset para página 1
     };
 
+    if (loading) {
+    return (
+      <div className="d-flex justify-content-center py-5">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Carregando...</span>
+        </div>
+      </div>
+    );
+    }
 
     return (
         <div className="container mt-5">

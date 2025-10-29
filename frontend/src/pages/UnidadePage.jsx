@@ -6,6 +6,7 @@ import ToastMessage from "../components/ToastMessage";
 const UnidadePage = () => {
     const [nome, setNome] = useState("")
     const [unidades, setUnidades] = useState([])
+    const [loading, setLoading] = useState(true)
     const [toast, setToast] = useState({
       show: false,
       message: "",
@@ -21,8 +22,10 @@ const UnidadePage = () => {
             try {
                 const res = await api.get("/unidade/");
                 setUnidades(res.data);
+                setLoading(false);
             } catch (err) {
                 console.error(err);
+                setLoading(false)
             }
         };
         fetchUnidades();
@@ -54,6 +57,15 @@ const UnidadePage = () => {
         }
     };
 
+    if (loading) {
+    return (
+      <div className="d-flex justify-content-center py-5">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Carregando...</span>
+        </div>
+      </div>
+    );
+    }
 
     return (
         <div className="container mt-5">

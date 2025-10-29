@@ -37,7 +37,7 @@ def register_user(user: UserRegister, session: Session = Depends(get_session)):
         response_model=Token)
 def login(user: UserLogin, session: Session = Depends(get_session)):
     db_user = crud_user.get_user_by_username(session, user.username)
-    if verify_password(user.password, db_user.hashed_password):
+    if not verify_password(user.password, db_user.hashed_password):
         raise HTTPException(status_code=400, detail='Credenciais inválidas')
 
     access_token = create_access_token({'sub': db_user.username, 'id': db_user.id, 'privilegio': db_user.privilegio.nome})

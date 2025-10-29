@@ -114,7 +114,7 @@ const Chamados = () => {
         ? {
           ...chamado,
           status: 'Concluído',
-          data_fechamento: response.data
+          data_fechamento: response.data.data_fechamento
         }
         : chamado
         )

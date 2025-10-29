@@ -21,7 +21,7 @@ router = APIRouter(prefix='/modulo', tags=['Modulo'])
 )
 def listar_modulos(
     session: Session = Depends(get_session),
-    offset: int = 0,
+    offset: int = 1,
     limit: int = 20,
     search: str = ''):
 

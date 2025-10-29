@@ -30,6 +30,7 @@ def hash_password(password: str):
 
 
 def verify_password(password, hashed):
+    print(f"Password: {password}\nHash: {hashed}")
     return pwd_context.verify(password, hashed)
 
 

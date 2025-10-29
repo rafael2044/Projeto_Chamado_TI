@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session, joinedload, selectinload
 from fastapi import HTTPException
 from fastapi import UploadFile
 from http import HTTPStatus
+from datetime import datetime
 import os
 
 
@@ -117,18 +118,20 @@ class CRUDChamado:
             raise e
         return chamado_db
 
+    def finalizar_chamado(self, session: Session, chamado_id: int):
+        chamado_update = self.update_chamado(session, chamado_id, {'status_id': 3, 'data_fechamento': datetime.now()})
+        return chamado_update
+
     async def insert_anexo_chamado(self, session: Session, file: UploadFile, chamado_id:int):
         chamado_db = self.get_chamado_by_id(session, chamado_id)
-        # Verifica extensão permitida
+
         allowed_extensions = ['.jpg', '.jpeg', '.png', '.pdf']
         file_ext = os.path.splitext(file.filename)[1].lower()
         if file_ext not in allowed_extensions:
             raise HTTPException(status_code=400, detail='Formato de arquivo não permitido')
 
-        # Define o caminho para salvar
         save_path = os.path.join(UPLOAD_DIR, f'chamado_{chamado_id}_{file.filename}')
 
-        # Salva o arquivo
         with open(save_path, 'wb') as f:
             content = await file.read()
             f.write(content)

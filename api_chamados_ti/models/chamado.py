@@ -33,8 +33,8 @@ class Chamado(Base):
         default=datetime.now()
     )
     data_fechamento: Mapped[datetime] = mapped_column(DateTime, nullable=True)
-    caminho_anexo: Mapped[str] = mapped_column(nullable=False)
-    tipo_anexo: Mapped[str] = mapped_column(String(20), nullable=False)
+    caminho_anexo: Mapped[str] = mapped_column(nullable=True)
+    tipo_anexo: Mapped[str] = mapped_column(String(20), nullable=True)
 
     unidade: Mapped['Unidade'] = relationship(back_populates='chamados')
     modulo: Mapped['Modulo'] = relationship(back_populates='chamados')
