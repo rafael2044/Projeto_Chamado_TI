@@ -1,7 +1,9 @@
 import axios from "axios";
 
+console.log(process.env.REACT_APP_API_URL)
+
 const api = axios.create({
-  baseURL: "http://127.0.0.1:8000",
+  baseURL: process.env.REACT_APP_API_URL,
 });
 
 // 🔐 Intercepta todas as requisições
@@ -24,7 +26,7 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && refreshToken && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        const res = await axios.post("http://127.0.0.1:8000/refresh", { refresh_token: refreshToken });
+        const res = await axios.post(`${process.env.API_URL}/refresh`, { refresh_token: refreshToken });
         if (res.status === 401){
             localStorage.removeItem("access_token");
             localStorage.removeItem("refresh_token");
