@@ -5,9 +5,9 @@ import ToastMessage from "../components/ToastMessage";
 const ChamadoForm = () => {
 
   const [titulo, setTitulo] = useState("");
-  const [unidade, setUnidade] = useState(0);
+  const [unidade, setUnidade] = useState(null);
   const [setor, setSetor] = useState("");
-  const [modulo, setModulo] = useState(0);
+  const [modulo, setModulo] = useState(null);
   const [urgencia, setUrgencia] = useState("Média");
   const [descricao, setDescricao] = useState("");
   const [anexo, setAnexo] = useState(null);

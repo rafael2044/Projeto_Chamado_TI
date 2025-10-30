@@ -31,11 +31,11 @@ class Chamado(Base):
         ForeignKey('status.id'),
         nullable=False)
     data_abertura: Mapped[datetime] = mapped_column(
-        DateTime,
+        DateTime(timezone=True),
         nullable=False,
         default=func.now()
     )
-    data_fechamento: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    data_fechamento: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
     caminho_anexo: Mapped[str] = mapped_column(nullable=True)
     tipo_anexo: Mapped[str] = mapped_column(String(20), nullable=True)
 

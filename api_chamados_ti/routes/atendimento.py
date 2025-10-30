@@ -3,6 +3,7 @@ from http import HTTPStatus
 from fastapi import APIRouter, Depends, File, Form, UploadFile
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
+from zoneinfo import ZoneInfo
 
 from api_chamados_ti.core.security import JWTBearer, get_current_user, require_privilegio
 from api_chamados_ti.db.database import get_session
@@ -14,6 +15,7 @@ from api_chamados_ti.crud.atendimento import crud_atendimento as crud
 router = APIRouter(prefix='/atendimento', tags=['Atendimento'])
 
 UPLOAD_DIR = 'uploads/'
+TARGET_TIMEZONE = ZoneInfo("America/Sao_Paulo")
 
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
@@ -38,7 +40,7 @@ async def insert_atendimento(
         'id': new_atendimento.id,
         'suporte': current_user.username,
         'descricao': new_atendimento.descricao,
-        'data_atendimento': new_atendimento.data_atendimento,
+        'data_atendimento': new_atendimento.data_atendimento.astimezone(TARGET_TIMEZONE),
         'anexo': True if new_atendimento.anexo else False
     }
 

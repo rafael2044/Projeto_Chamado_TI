@@ -3,6 +3,7 @@ from http import HTTPStatus
 from fastapi import APIRouter, Depends, File, UploadFile
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
+from zoneinfo import ZoneInfo
 
 
 from api_chamados_ti.core.security import JWTBearer, get_current_user, require_privilegio
@@ -14,6 +15,7 @@ from api_chamados_ti.schemas.chamadosResponse import ChamadosResponse
 
 
 router = APIRouter(prefix='/chamados', tags=['Chamados'])
+TARGET_TIMEZONE = ZoneInfo('America/Sao_Paulo')
 
 UPLOAD_DIR = 'uploads/'
 
@@ -42,14 +44,14 @@ def get_chamados(session: Session = Depends(get_session), offset: int = 1, limit
             'descricao': c.descricao,
             'status': c.status.nome,
             'anexo': True if c.caminho_anexo else False,
-            'data_abertura': c.data_abertura,
-            'data_fechamento': c.data_fechamento,
+            'data_abertura': c.data_abertura.astimezone(TARGET_TIMEZONE),
+            'data_fechamento': c.data_fechamento.astimezone(TARGET_TIMEZONE) if c.data_fechamento else None,
             'solicitante': c.usuario.username if c.usuario else 'Desconhecido',
             'atendimentos': [
                 {
                     'id': a.id,
                     'descricao': a.descricao,
-                    'data_atendimento': a.data_atendimento,
+                    'data_atendimento': a.data_atendimento.astimezone(TARGET_TIMEZONE),
                     'suporte': a.suporte.username if a.suporte else 'Desconhecido',
                     'anexo': True if a.anexo else False
                 }
@@ -111,5 +113,5 @@ def finalizar_chamado(chamado_id: int,
 
     return {
         'message': f'Chamado #{chamado_id} finalizado com sucesso',
-        'data_fechamento': chamado_db.data_fechamento
+        'data_fechamento': chamado_db.data_fechamento.astimezone(TARGET_TIMEZONE)
     }
