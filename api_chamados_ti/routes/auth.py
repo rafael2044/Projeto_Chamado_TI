@@ -36,7 +36,7 @@ def register_user(user: UserRegister, session: Session = Depends(get_session)):
         status_code=status.HTTP_200_OK,
         response_model=Token)
 def login(user: UserLogin, session: Session = Depends(get_session)):
-    db_user = crud_user.get_user_by_username(session, user.username)
+    db_user = crud_user.get_user_by_username(session, user.username.lower())
     if not verify_password(user.password, db_user.hashed_password):
         raise HTTPException(status_code=400, detail='Credenciais inválidas')
 

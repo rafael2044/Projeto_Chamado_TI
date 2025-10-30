@@ -1,6 +1,5 @@
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import api from "../services/api";
-import "bootstrap/dist/css/bootstrap.min.css";
 import ToastMessage from "../components/ToastMessage";
 
 const ITEMS_PER_PAGE = 5;

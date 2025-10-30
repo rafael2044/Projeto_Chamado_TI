@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import api from "../services/api";
-import "bootstrap/dist/css/bootstrap.min.css";
 import ToastMessage from "../components/ToastMessage";
 
 const Login = () => {

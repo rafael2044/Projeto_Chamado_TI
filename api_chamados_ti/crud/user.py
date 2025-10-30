@@ -78,7 +78,7 @@ class CRUDUser:
             )
 
         new_user = User(
-            username = user.username,
+            username = user.username.lower(),
             hashed_password = hash_password(user.password),
             privilegio_id = 1
         )
@@ -96,7 +96,7 @@ class CRUDUser:
             )
 
         new_user = User(
-            username=user.username,
+            username=user.username.lower(),
             hashed_password=hash_password(user.password),
             privilegio_id = user.privilegio
         )

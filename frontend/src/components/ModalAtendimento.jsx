@@ -1,5 +1,4 @@
 import { useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
 
 function ModalAtendimento({ show, onClose, onSubmit, chamado }) {
   const [descricao, setDescricao] = useState("");

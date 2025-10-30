@@ -1,7 +1,6 @@
 import { useState } from "react";
 import ChamadoItem from "./ChamadoItem";
 import ModalAtendimento from "./ModalAtendimento";
-import "bootstrap/dist/css/bootstrap.min.css";
 
 function ChamadoList({ chamados, onSubmitAtendimento, onFinalizar }) {
   const [modalAberto, setModalAberto] = useState(false);

@@ -1,7 +1,6 @@
 // ChamadoItem.jsx
 import { useState } from "react";
 import useAuth from '../hooks/useAuth'
-import "bootstrap/dist/css/bootstrap.min.css";
 
 function ChamadoItem({ chamado,
   onAtender = () => {} ,
