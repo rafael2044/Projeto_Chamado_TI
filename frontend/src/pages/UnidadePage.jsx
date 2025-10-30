@@ -4,18 +4,15 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import ToastMessage from "../components/ToastMessage";
 
 const UnidadePage = () => {
-    const [nome, setNome] = useState("")
-    const [unidades, setUnidades] = useState([])
-    const [loading, setLoading] = useState(true)
+    const [nome, setNome] = useState("");
+    const [unidades, setUnidades] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const [toast, setToast] = useState({
       show: false,
       message: "",
       type: "info",
     });
-
-    const showToast = (message, type = "info") => {
-        setToast({ show: true, message, type });
-    };
 
     useEffect(() => {
         const fetchUnidades = async () => {
@@ -31,8 +28,12 @@ const UnidadePage = () => {
         fetchUnidades();
     }, []);
 
-    const cadastrarUnidade = async (e) => {
+    const showToast = (message, type = "info") => {
+        setToast({ show: true, message, type });
+    };
 
+    const cadastrarUnidade = async (e) => {
+        setIsLoading(true);
         e.preventDefault();
         try {
             const response = await api.post("/unidade/", {nome});
@@ -42,18 +43,24 @@ const UnidadePage = () => {
         } catch (error) {
             console.error(error);
             showToast("Erro ao cadastrar nova unidade", "error")
+        }finally{
+            setIsLoading(false);
         }
     };
 
     const excluirUnidade = async (id) => {
         if (!window.confirm("Tem certeza que deseja excluir esta unidade?")) return;
+        setIsLoading(true);
 
         try {
             await api.delete(`/unidade/${id}`);
             showToast("Unidade deletada com sucesso", "success")
+            setUnidades(prevUnidades => (prevUnidades.filter(unidade => unidade.id !== id)))
         } catch (error) {
             console.error("Erro ao excluir unidade:", error);
             showToast("Erro ao deletar unidade", "error")
+        }finally{
+            setIsLoading(false);
         }
     };
 
@@ -84,7 +91,7 @@ const UnidadePage = () => {
                         />
                     </div>
                     <div className="col-md-2 d-grid">
-                        <button type="submit" className="btn btn-primary">
+                        <button type="submit" className="btn btn-primary" disabled={isLoading}>
                             Cadastrar
                         </button>
                     </div>
@@ -104,6 +111,7 @@ const UnidadePage = () => {
                                 <span>{unidade.nome}</span>
                                 <button
                                     className="btn btn-sm btn-outline-danger"
+                                    disabled={isLoading}
                                     onClick={() => excluirUnidade(unidade.id)}
                                 >
                                     Excluir

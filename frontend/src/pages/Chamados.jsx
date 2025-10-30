@@ -19,13 +19,15 @@ const Chamados = () => {
   const [chamadoSelecionado, setChamadoSelecionado] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState({
         show: false,
         message: "",
         type: "info",
       });
-      
+  
+
   useEffect(() => {
     const fetchChamados = async () => {
       try {
@@ -72,6 +74,7 @@ const Chamados = () => {
   };
 
   const onSubmitAtendimento = async (idChamado, data)=>{
+    setIsLoading(true);
     try {
       const response = await api.post(
         `/atendimento/${idChamado}`,
@@ -99,10 +102,13 @@ const Chamados = () => {
     } catch (error) {
       console.error(error);
       showToast("Erro ao registrar atendimento", "error")
+    }finally{
+      setIsLoading(false);
     }
   }
 
   const onFinalizar = async (chamadoId) => {
+    setIsLoading(true);
     try {
       const response = await api.patch(
           `/chamados/${chamadoId}/finalizar`);
@@ -123,10 +129,13 @@ const Chamados = () => {
     } catch (error) {
       console.error(error);
       showToast("Aconteceu um erro ao tentar finalizar o chamado.", 'error');
+    }finally{
+      setIsLoading(false);
     }
   }
 
   const downloadAnexoAtendimento = async (atendimento_id) => {
+    setIsLoading(true);
     try{
       const response = await api.get(
         `/atendimento/${atendimento_id}/anexo`, 
@@ -134,13 +143,6 @@ const Chamados = () => {
       const blob = response.data;
 
       const contentDisposition = response.headers['content-disposition']; 
-
-      if (!contentDisposition) {
-        console.error("Header 'content-disposition' NÃO ENCONTRADO!");
-        // Se não encontrou, continua com um nome padrão
-      } else {
-        console.log("Header 'content-disposition' ENCONTRADO:", contentDisposition);
-      }
       
       let filename = 'anexo_atendimento'; // Nome padrão
       
@@ -168,10 +170,13 @@ const Chamados = () => {
     }catch(error){
       console.error(error)
       showToast("Erro ao baixar anexo", "error")
+    }finally{
+      setIsLoading(false);
     }
   }
 
   const downloadAnexoChamado = async (chamado_id) => {
+    setIsLoading(true);
     try{
       const response = await api.get(
         `/chamados/${chamado_id}/anexo`, 
@@ -179,13 +184,6 @@ const Chamados = () => {
       const blob = response.data;
 
       const contentDisposition = response.headers['content-disposition']; 
-
-      if (!contentDisposition) {
-        console.error("Header 'content-disposition' NÃO ENCONTRADO!");
-        // Se não encontrou, continua com um nome padrão
-      } else {
-        console.log("Header 'content-disposition' ENCONTRADO:", contentDisposition);
-      }
       
       let filename = 'anexo_atendimento'; // Nome padrão
       
@@ -213,6 +211,8 @@ const Chamados = () => {
     }catch(error){
       console.error(error)
       showToast("Erro ao baixar anexo", "error")
+    }finally{
+      setIsLoading(false);
     }
   }
 
@@ -262,6 +262,7 @@ const Chamados = () => {
                   handlerFinalizar={onFinalizar}
                   handlerDownloadAnexo={downloadAnexoAtendimento}
                   handlerDownloadAnexoChamado = {downloadAnexoChamado}
+                  isLoading = {isLoading}
                 />
               ))}
             </ul>

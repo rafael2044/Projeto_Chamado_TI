@@ -7,9 +7,10 @@ function ChamadoItem({ chamado,
   onAtender = () => {} ,
   handlerFinalizar = () => {},
   handlerDownloadAnexo = ()=>{},
-  handlerDownloadAnexoChamado = ()=>{}}) {
+  handlerDownloadAnexoChamado = ()=>{},
+  isLoading = false}) {
   const [aberto, setAberto] = useState(false);
-  const {isAdmin, isSuporte} = useAuth()
+  const {isAdmin, isSuporte} = useAuth();
   const getStatusClass = (status) => {
     switch (status) {
       case "Pendente":
@@ -36,6 +37,7 @@ function ChamadoItem({ chamado,
           <div className="small text-muted">
             <strong>Unidade:</strong> {chamado.unidade} |{" "}
             <strong>Setor:</strong> {chamado.setor} |{" "}
+            <strong>Modulo:</strong> {chamado.modulo} |{" "}
             <strong>Solicitante:</strong> {chamado.solicitante}
           </div>
         </div>
@@ -81,6 +83,7 @@ function ChamadoItem({ chamado,
                 <button
                   type="button"
                   className="btn btn-secondary btn-sm mx-2"
+                  disabled={isLoading}
                   onClick={(e) => {
                     e.stopPropagation(); // evita fechar/abrir accordion ao clicar no botão
                     onAtender(chamado.id);
@@ -91,6 +94,7 @@ function ChamadoItem({ chamado,
                 <button
                   type="button"
                   className="btn btn-primary btn-sm"
+                  disabled={isLoading}
                   onClick={(e) => {
                     e.stopPropagation(); // evita fechar/abrir accordion ao clicar no botão
                     handlerFinalizar(chamado.id);
@@ -135,6 +139,7 @@ function ChamadoItem({ chamado,
                         <button
                           type="button"
                           className="btn btn-primary btn-sm"
+                          disabled={isLoading}
                           onClick={(e) => {
                             e.stopPropagation(); // evita fechar/abrir accordion ao clicar no botão
                             handlerDownloadAnexo(a.id);

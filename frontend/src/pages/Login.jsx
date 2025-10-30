@@ -5,6 +5,7 @@ import ToastMessage from "../components/ToastMessage";
 
 const Login = () => {
   const [form, setForm] = useState({ username: "", password: "" });
+  const [isLoading, setIsLoading] = useState(false);
   const [toast, setToast] = useState({
     show: false,
     message: "",
@@ -19,15 +20,20 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
       const res = await api.post("/login", form);
-      localStorage.setItem("access_token", res.data.access_token);
-      localStorage.setItem("refresh_token", res.data.refresh_token);
+      const {access_token, refresh_token} = res.data;
+      localStorage.setItem("access_token", access_token);
+      localStorage.setItem("refresh_token", refresh_token);
       showToast("Login realizado com sucesso", "success")
       window.location.href = "/chamados";
+      setIsLoading(false);
     } catch (err) {
       console.error(err);
       showToast("Falha no login: Usuário ou Senha incorreta", "error")
+    }finally{
+      setIsLoading(false);
     }
   };
 
@@ -65,8 +71,18 @@ const Login = () => {
                   />
                 </div>
 
-                <button type="submit" className="btn btn-primary w-100">Entrar</button>
+                <button type="submit" className="btn btn-primary w-100" disabled={isLoading}>Entrar</button>
+                
               </form>
+              {isLoading && (
+                <div className="alert alert-info d-flex align-items-center" role="alert">
+                  {/* Spinner do Bootstrap */}
+                  <div className="spinner-border spinner-border-sm me-2" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                  <span>Validando credenciais, por favor aguarde...</span>
+                </div>
+              )}
             </div>
           </div>
         </div>

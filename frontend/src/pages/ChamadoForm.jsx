@@ -1,37 +1,39 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useRef} from "react";
 import api from "../services/api";
 import "bootstrap/dist/css/bootstrap.min.css";
 import ToastMessage from "../components/ToastMessage";
 const ChamadoForm = () => {
-  const [titulo, setTitulo] = useState("")
-  const [unidade, setUnidade] = useState(1)
-  const [setor, setSetor] = useState("")
-  const [modulo, setModulo] = useState(1)
-  const [urgencia, setUrgencia] = useState("Média")
-  const [descricao, setDescricao] = useState("")
+
+  const [titulo, setTitulo] = useState("");
+  const [unidade, setUnidade] = useState(0);
+  const [setor, setSetor] = useState("");
+  const [modulo, setModulo] = useState(0);
+  const [urgencia, setUrgencia] = useState("Média");
+  const [descricao, setDescricao] = useState("");
   const [anexo, setAnexo] = useState(null);
-  const [unidades, setUnidades] = useState([])
-  const [modulos, setModulos] = useState([])
+  const [unidades, setUnidades] = useState([]);
+  const [modulos, setModulos] = useState([]);
   const [loading, setLoading] = useState(true);
-    
+  const [isLoading, setIsLoading] = useState(false);
+  const inputRef = useRef(null);
+
   const [toast, setToast] = useState({
       show: false,
       message: "",
       type: "info",
   });
 
-  const showToast = (message, type = "info") => {
-    setToast({ show: true, message, type });
-  };
 
   useEffect(() => {
     const fetchUnidades = async () => {
       try {
           const res = await api.get("/unidade/");
           setUnidades(res.data);
+          setUnidade(res.data[0].id)
           setLoading(false);
         } catch (err) {
           console.error(err);
+          showToast("Erro ao carregar unidades", "error")
           setLoading(false);
         }
     };
@@ -39,32 +41,43 @@ const ChamadoForm = () => {
       try {
         const res = await api.get("/modulo/");
         setModulos(res.data);
+        setModulo(res.data[0].id)
         setLoading(false);
       } catch (err) {
         console.error(err);
         setLoading(false);
+        showToast("Erro ao carregar modulos", "error")
       }
     };
     fetchUnidades();
     fetchModulos();
   }, []);
 
+
+  const showToast = (message, type = "info") => {
+    setToast({ show: true, message, type });
+  };
+  
+
   async function enviarAnexo(chamadoId, arquivo) {
       const formData = new FormData();
       formData.append("file", arquivo);
       try {
-          console.log(arquivo)
-          await api.post(`/chamados/${chamadoId}/anexo`, formData, {
+          const response = await api.post(`/chamados/${chamadoId}/anexo`, formData, {
             headers: { "Content-Type": "multipart/form-data" },
-          })
+          });
+          showToast(response.data.message);
+
       } catch (err) {
           console.error(err);
+          showToast(`Erro ao enviar anexo do chamado #${chamadoId}`, "error");
       }
   }
 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true)
     try {
         const response = await api.post("/chamados/",
           {titulo, unidade, setor, modulo, urgencia, descricao}
@@ -72,7 +85,6 @@ const ChamadoForm = () => {
         const chamado_id = await response.data.chamado_id
         if (anexo){
           await enviarAnexo(chamado_id, anexo)
-          setAnexo("")
         }
         showToast(response.data.message, 'success')
         setTitulo("")
@@ -81,9 +93,14 @@ const ChamadoForm = () => {
         setModulo(1)
         setUrgencia("Média")
         setDescricao("")
+        setAnexo("")
+        inputRef.current.value = null;
+        setIsLoading(false);
     } catch (error) {
       console.error(error);
       showToast("Erro ao enviar chamado", "error")
+    } finally{
+      setIsLoading(false);
     }
   };
 
@@ -103,7 +120,7 @@ const ChamadoForm = () => {
         <div className="col-md-6">
           <div className="card shadow-sm">
             <div className="card-body">
-              <h3 className="card-title mb-4 text-center">Abrir Chamado de T.I</h3>
+              <h3 className="card-title mb-4 text-center">Abrir Chamado</h3>
               <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                   <label className="form-label">Título</label>
@@ -113,7 +130,7 @@ const ChamadoForm = () => {
                 <div className="mb-3">
                   <label className="form-label">Unidade</label>
                   <select name="unidade" value={unidade} onChange={(e)=>setUnidade(e.target.value)} className="form-select" required>
-                      {unidades.map((u, index) => (
+                      {unidades.map((u) => (
                           <option value={u.id} key={u.id}>{u.nome}</option>
                       ))}
                   </select>
@@ -127,7 +144,7 @@ const ChamadoForm = () => {
                 <div className="mb-3">
                   <label className="form-label">Modulo</label>
                   <select name="modulo" value={modulo} onChange={(e)=>setModulo(e.target.value)} className="form-select" required>
-                      {modulos.map((m, index) => (
+                      {modulos.map((m) => (
                           <option value={m.id} key={m.id}>{m.nome}</option>
                       ))}
                   </select>
@@ -146,9 +163,21 @@ const ChamadoForm = () => {
                   <label className="form-label">Descrição</label>
                   <textarea name="descricao" value={descricao} onChange={(e)=>setDescricao(e.target.value)} className="form-control" rows="5" required />
                 </div>
-                  <input name="anexo" type="file" onChange={e => setAnexo(e.target.files[0])}/>
-                <button type="submit" className="btn btn-primary w-100">Enviar Chamado</button>
+                <div className="mb-3">
+                  <label className="form-label">Anexo (Opcional)</label>
+                  <input className="form-control" name="anexo" type="file" accept=".jpg,.jpeg,.png,.pdf" onChange={e => setAnexo(e.target.files[0]) } ref={inputRef}/>
+                </div>
+                <button type="submit" className="btn btn-primary w-100" disabled={isLoading}>Enviar Chamado</button>
               </form>
+              {isLoading && (
+                <div className="alert alert-info d-flex align-items-center" role="alert">
+                  {/* Spinner do Bootstrap */}
+                  <div className="spinner-border spinner-border-sm me-2" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                  <span>Enviando chamado, por favor aguarde...</span>
+                </div>
+              )}
             </div>
           </div>
         </div>

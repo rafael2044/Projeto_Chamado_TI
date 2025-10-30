@@ -24,8 +24,8 @@ function Register() {
       setUsername("");
       setPassword("");
     } catch (error) {
-      if (error.response.status === 400){
-        showToast("Usuário já existente", "warning")
+      if (error.response.status === 409){
+        showToast("Usuário já cadastrado", "warning")
       }else {
         showToast("Erro ao registrar usuário", "error")
       }

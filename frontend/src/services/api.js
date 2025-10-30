@@ -6,7 +6,7 @@ const api = axios.create({
   baseURL: process.env.REACT_APP_API_URL,
 });
 
-// 🔐 Intercepta todas as requisições
+// Intercepta todas as requisições
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("access_token");
   if (token) {
@@ -26,7 +26,7 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && refreshToken && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        const res = await axios.post(`${process.env.API_URL}/refresh`, { refresh_token: refreshToken });
+        const res = await axios.post(`${process.env.REACT_APP_API_URL}/refresh`, { refresh_token: refreshToken });
         if (res.status === 401){
             localStorage.removeItem("access_token");
             localStorage.removeItem("refresh_token");

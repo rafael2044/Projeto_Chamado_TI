@@ -1,4 +1,3 @@
-import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {logout} from "../services/auth";
 import useAuth from '../hooks/useAuth'
@@ -6,7 +5,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const {user, isAdmin, isSuporte} = useAuth();
+  const {user, isAdmin} = useAuth();
 
   const handleLogout = () => {
     logout();
@@ -48,7 +47,7 @@ const Navbar = () => {
                                 <li className="nav-item">
                                     <Link className="nav-link" to="/chamados">Listar Chamados</Link>
                                 </li>
-                                {(isAdmin || isSuporte) && (
+                                {(isAdmin) && (
                                     <>
                                         <li className="nav-item">
                                             <Link className="nav-link" to="/unidades">Unidades</Link>

@@ -11,6 +11,7 @@ const UsuarioPage = () => {
     const [privilegio, setPrivilegio] = useState(1);
     const [privilegios, setPrivilegios] = useState([])
     const [currentPage, setCurrentPage] = useState(1)
+    const [isLoading, setIsLoading] = useState(false);
     const [loading, setLoading] = useState(true)
     const [data, setData] = useState({
         users: [],
@@ -56,8 +57,8 @@ const UsuarioPage = () => {
     }, [currentPage, search]);
 
     const cadastrarUsuario = async (e) => {
-
         e.preventDefault();
+        setIsLoading(true);
         try {
             const response = await api.post("/user/", {username: nome, password, privilegio});
             showToast("Usuário cadastrado com sucesso", "success")
@@ -70,19 +71,26 @@ const UsuarioPage = () => {
         } catch (error) {
             console.error(error);
             showToast("Erro ao cadastrar usuário", "error")
+        }finally{
+            setIsLoading(false);
         }
     };
 
     const excluirUsuario = async (id) => {
         if (!window.confirm("Tem certeza que deseja excluir esta unidade?")) return;
-
-
+        setIsLoading(false);
         try {
             await api.delete(`/user/${id}`);
-            showToast("Usuário deletado com sucesso", "error")
+            showToast("Usuário deletado com sucesso", "success")
+            setData(prevData => ({
+                ...prevData,
+                users: prevData.users.filter(user => user.id !== id)
+            }))
         } catch (error) {
             console.error("Erro ao excluir unidade:", error);
             showToast("Erro ao deletar usuário", "error")
+        }finally{
+            setIsLoading(true);
         }
     };
 
@@ -92,7 +100,7 @@ const UsuarioPage = () => {
 
     const handleSearch = (e) => {
         setSearch(e.target.value);
-        setCurrentPage(1); // Reset para página 1
+        setCurrentPage(1);
     };
 
     if (loading) {
@@ -142,12 +150,23 @@ const UsuarioPage = () => {
                         </select>
                     </div>
                     <div className="col-md-1 d-grid">
-                        <button type="submit" className="btn btn-primary">
+                        <button type="submit" className="btn btn-primary" disabled={isLoading}>
                             +
                         </button>
                     </div>
                 </form>
-
+                <div className="input-group mb-3">
+                <span className="input-group-text">
+                <i className="bi bi-search"></i>
+                </span>
+                <input
+                type="text"
+                className="form-control"
+                placeholder="Buscar usuário..."
+                value={search}
+                onChange={handleSearch}
+                />
+                </div>
                 {/* Lista de unidades */}
                 <h5 className="mt-4 mb-3">Usuários cadastrados</h5>
                 {data.users.length === 0 ? (
@@ -157,6 +176,7 @@ const UsuarioPage = () => {
                         <table className="table table-striped table-hover align-middle">
                             <thead>
                             <tr>
+                                <th>ID</th>
                                 <th>Nome</th>
                                 <th>Privilégio</th>
                                 <th className="text-end">Ações</th>
@@ -165,11 +185,13 @@ const UsuarioPage = () => {
                             <tbody>
                             {data.users.map((usuario) => (
                                 <tr key={usuario.id}>
+                                    <td>{usuario.id}</td>
                                     <td>{usuario.username}</td>
                                     <td>{usuario.privilegio.nome}</td>
                                     <td className="text-end">
                                         <button
                                             className="btn btn-sm btn-outline-danger"
+                                            disabled={isLoading}
                                             onClick={() => excluirUsuario(usuario.id)}
                                         >
                                             Excluir
