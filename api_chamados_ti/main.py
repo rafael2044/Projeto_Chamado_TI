@@ -27,6 +27,7 @@ app.add_exception_handler(OperationalError, db_connection_exception_handler)
 origins = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
+    'https://projeto-chamado-ti-dqry.vercel.app/'
 ]
 
 app.add_middleware(
