@@ -1,8 +1,8 @@
 from datetime import datetime
 from typing import List
-
 from sqlalchemy import DateTime, ForeignKey, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 
 from api_chamados_ti.db.database import Base
 
@@ -12,15 +12,18 @@ class Chamado(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     usuario_id: Mapped[int] = mapped_column(
-        ForeignKey('user.id', ondelete='CASCADE', onupdate='CASCADE')
+        ForeignKey('user.id', ondelete='CASCADE', onupdate='CASCADE'),
+        nullable=True
     )
     titulo: Mapped[str] = mapped_column(String(255), nullable=False)
     unidade_id: Mapped[int] = mapped_column(
-        ForeignKey('unidade.id', ondelete='CASCADE', onupdate='CASCADE')
+        ForeignKey('unidade.id', ondelete='CASCADE', onupdate='CASCADE'),
+        nullable=True
     )
     setor: Mapped[str] = mapped_column(String(75), nullable=False)
     modulo_id: Mapped[int] = mapped_column(
-        ForeignKey('modulo.id', ondelete='CASCADE', onupdate='CASCADE')
+        ForeignKey('modulo.id', ondelete='CASCADE', onupdate='CASCADE'),
+        nullable=True
     )
     urgencia: Mapped[str] = mapped_column(String(20), nullable=False)
     descricao: Mapped[str] = mapped_column(Text(), nullable=False)
@@ -30,7 +33,7 @@ class Chamado(Base):
     data_abertura: Mapped[datetime] = mapped_column(
         DateTime,
         nullable=False,
-        default=datetime.now()
+        default=func.now()
     )
     data_fechamento: Mapped[datetime] = mapped_column(DateTime, nullable=True)
     caminho_anexo: Mapped[str] = mapped_column(nullable=True)

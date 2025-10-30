@@ -1,7 +1,9 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class ChamadoRequest(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+
     titulo: str
     unidade: int
     setor: str

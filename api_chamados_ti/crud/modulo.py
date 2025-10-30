@@ -5,11 +5,11 @@ from http import HTTPStatus
 
 
 from api_chamados_ti.schemas.moduloRequest import ModuloRequest
-from api_chamados_ti.schemas.moduloResponse import ModuloResponse
 from api_chamados_ti.models.modulo import Modulo
 
 
 class CRUDModulo:
+
 
     def get_modulos(
             self,
@@ -17,7 +17,7 @@ class CRUDModulo:
             offset: int = 1,
             limit: int = 100,
             search: str = ''
-        ) -> list[Modulo]:
+    ) -> list[Modulo]:
         skip = (offset - 1) * limit
         smtm = select(Modulo).offset(skip).limit(limit)
         if search:
@@ -27,7 +27,8 @@ class CRUDModulo:
                     .limit(limit))
         
         return session.scalars(smtm).all()
-    
+
+
     def get_total_modulos(self, session: Session, search: str = ''):
         smtm = select(Modulo)
         if search:
@@ -36,8 +37,12 @@ class CRUDModulo:
         total = session.execute(select(func.count()).select_from(smtm)).scalar()
         return total
 
+
     def get_modulo_by_id(self, session: Session, modulo_id: int) -> Modulo:
-        modulo_db = session.scalars(select(Modulo).where(Modulo.id == modulo_id)).first()
+        modulo_db = session.scalars(
+            select(Modulo)
+            .where(Modulo.id == modulo_id)
+        ).first()
         if not modulo_db:
             raise HTTPException(
                 status_code=HTTPStatus.NOT_FOUND,
@@ -45,7 +50,8 @@ class CRUDModulo:
             )
 
         return modulo_db
-    
+
+
     def exists_modulo(self, session: Session, nome: str) -> bool:
         modulo_db = session.scalars(
             select(Modulo)
@@ -53,7 +59,8 @@ class CRUDModulo:
         if not modulo_db:
             return False
         return True
-    
+
+
     def insert_modulo(self, session: Session, modulo: ModuloRequest) -> Modulo:
         if self.exists_modulo(session, modulo.nome):
             raise HTTPException(
@@ -68,10 +75,10 @@ class CRUDModulo:
 
 
     def delete_modulo(self, session:Session, modulo_id: int):
-        modulo_db = self.get_modulo_by_id(modulo_id)
+        modulo_db = self.get_modulo_by_id(session, modulo_id)
         
         session.delete(modulo_db)
-        session.commit
+        session.commit()
 
 
 crud_modulo = CRUDModulo()

@@ -1,7 +1,7 @@
 from http import HTTPStatus
-
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
+
 
 from api_chamados_ti.core.security import JWTBearer, require_privilegio
 from api_chamados_ti.db.database import get_session
@@ -10,21 +10,22 @@ from api_chamados_ti.schemas.usersResponse import UsersResponse
 from api_chamados_ti.schemas.userResponse import UserResponse
 from api_chamados_ti.crud.user import crud_user as crud
 
+
 router = APIRouter(prefix='/user', tags=['User'])
 
 
 @router.get(
     '/',
-    dependencies=[Depends(JWTBearer()), Depends(require_privilegio(['Administrador', 'Suporte']))],
+    dependencies=[Depends(JWTBearer()), Depends(require_privilegio(['Administrador']))],
     response_model=UsersResponse,
     status_code=HTTPStatus.OK
 )
-def listar_users(
+def get_users(
     offset: int = 1,
     limit: int = 10,
     search: str = '',
     session: Session = Depends(get_session)
-    ):
+):
     
     skip = (offset - 1) * limit
     users = crud.get_users(session, skip, limit, search)
@@ -48,7 +49,7 @@ def listar_users(
 
 @router.post(
     '/',
-    dependencies=[Depends(JWTBearer()), Depends(require_privilegio(['Administrador', 'Suporte']))],
+    dependencies=[Depends(JWTBearer()), Depends(require_privilegio(['Administrador']))],
     response_model= UserResponse,
     status_code=HTTPStatus.CREATED
 )
@@ -63,3 +64,12 @@ def create_user(
         'username': new_user.username,
         'privilegio': new_user.privilegio
     }
+
+
+@router.delete(
+    '/{user_id}',
+    dependencies=[Depends(JWTBearer()), Depends(require_privilegio(['Administrador']))],
+    status_code=HTTPStatus.NO_CONTENT
+)
+def delete_user(user_id: int, session: Session = Depends(get_session)):
+    crud.delete_user(session, user_id)

@@ -1,7 +1,7 @@
 from http import HTTPStatus
-
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
+
 
 from api_chamados_ti.core.security import JWTBearer, require_privilegio
 from api_chamados_ti.db.database import get_session
@@ -19,7 +19,7 @@ router = APIRouter(prefix='/unidade', tags=['Unidade'])
         response_model=list[UnidadeResponse],
         status_code=HTTPStatus.OK
 )
-def listar_unidades(
+def get_unidades(
     session: Session = Depends(get_session),
     offset: int = 1,
     limit: int = 100,
@@ -28,10 +28,8 @@ def listar_unidades(
     unidades = crud.get_unidades(session, offset, limit, search)
     result = []
     for u in unidades:
-        result.append({
-            'id': u.id,
-            'nome': u.nome,
-        })
+        result.append(UnidadeResponse.model_validate(u))
+
     return result
 
 
@@ -43,7 +41,8 @@ def listar_unidades(
 )
 def create_unidade(unidade: UnidadeRequest, session: Session = Depends(get_session)):
     new_unidade = crud.insert_unidade(session, unidade)
-    return new_unidade
+    
+    return UnidadeResponse.model_validate(new_unidade)
 
 
 @router.delete(

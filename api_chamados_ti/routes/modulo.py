@@ -1,7 +1,7 @@
 from http import HTTPStatus
-
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
+
 
 from api_chamados_ti.core.security import JWTBearer, require_privilegio
 from api_chamados_ti.db.database import get_session
@@ -19,7 +19,7 @@ router = APIRouter(prefix='/modulo', tags=['Modulo'])
     response_model=list[ModuloResponse],
     status_code=HTTPStatus.OK
 )
-def listar_modulos(
+def get_modulos(
     session: Session = Depends(get_session),
     offset: int = 1,
     limit: int = 20,
@@ -29,10 +29,7 @@ def listar_modulos(
     modulos = crud.get_modulos(session, offset=offset, limit=limit, search=search)
 
     for m in modulos:
-        result.append({
-            'id': m.id,
-            'nome': m.nome
-        })
+        result.append(ModuloResponse.model_validate(m))
 
     return result
 
@@ -49,15 +46,12 @@ def create_modulo(
 ):
     new_modulo = crud.insert_modulo(session, modulo)
 
-    return {
-        'id': new_modulo.id,
-        'nome': new_modulo.nome
-    }
+    return ModuloResponse.model_validate(new_modulo)
 
 
 @router.delete(
     '/{modulo_id}',
-    dependencies=[Depends(JWTBearer()), Depends(require_privilegio(['Administrator', 'Suporte']))],
+    dependencies=[Depends(JWTBearer()), Depends(require_privilegio(['Administrador', 'Suporte']))],
     status_code=HTTPStatus.NO_CONTENT
 )
 def delete_modulo(modulo_id: int, session: Session = Depends(get_session)):

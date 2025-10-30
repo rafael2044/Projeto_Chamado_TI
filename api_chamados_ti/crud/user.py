@@ -12,13 +12,14 @@ from api_chamados_ti.core.security import hash_password
 
 class CRUDUser:
 
+
     def get_users(
             self,
             session: Session,
             skip: int = 0,
             limit: int = 10,
             search: str = ''
-        ) -> list[User]:
+    ) -> list[User]:
         try:
             smtm = select(User).options(joinedload(User.privilegio)).offset(skip).limit(limit)
             if search:
@@ -47,6 +48,7 @@ class CRUDUser:
                 detail="Erro no servidor"
             )
 
+
     def get_user_by_id(self, session: Session, user_id: int) -> User:
         user_db = session.scalar(select(User).where(User.id == user_id))
         if not user_db:
@@ -56,7 +58,8 @@ class CRUDUser:
             )
 
         return user_db
-    
+
+
     def get_user_by_username(self, session: Session, username: str) -> User:
         user_db = session.scalar(select(User).where(User.username == username))
         if not user_db:
@@ -65,7 +68,8 @@ class CRUDUser:
                 detail='Usuário não existe'
             )
         return user_db
-    
+
+
     def register_user(self, session: Session, user: UserRegister) -> User:
         if self.user_exists(session, user.username):
             raise HTTPException(
@@ -83,6 +87,7 @@ class CRUDUser:
         session.refresh(new_user)
         return new_user
 
+
     def insert_user(self, session: Session, user: UserCreate):
         if self.user_exists(session, user.username):
             raise HTTPException(
@@ -99,12 +104,14 @@ class CRUDUser:
         session.commit()
         session.refresh(new_user)
         return new_user
-    
+
+
     def delete_user(self, session:Session, user_id: int):
-        user_db = self.get_user_by_id(user_id)
+        user_db = self.get_user_by_id(session, user_id)
         
         session.delete(user_db)
-        session.commit
+        session.commit()
+
 
     def user_exists(self, session:Session, username):
         user_db = session.scalar(select(User).where(User.username == username))

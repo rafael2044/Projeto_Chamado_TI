@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-
 from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer, HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt
@@ -8,9 +7,11 @@ from sqlalchemy.orm import Session
 from pydantic import ValidationError
 from typing import Any
 
+
 from api_chamados_ti.db.database import get_session
 from api_chamados_ti.core.settings import Settings
 from api_chamados_ti.models.user import User
+
 
 SECRET_KEY = Settings().SECRET_KEY
 ALGORITHM = 'HS256'
@@ -19,6 +20,7 @@ REFRESH_TOKEN_EXPIRE_DAYS = 7
 
 pwd_context = CryptContext(schemes=['argon2'], deprecated='auto')
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/login')
+
 
 class TokenType:
     ACCESS = 'access'
@@ -97,7 +99,6 @@ def require_privilegio(required_privilegios: list[str]):
     return wrapper
 
     
-
 class JWTBearer(HTTPBearer):
     async def __call__(self, request: Request):
         credentials: HTTPAuthorizationCredentials = await super().__call__(
@@ -111,4 +112,3 @@ class JWTBearer(HTTPBearer):
                 detail='Token inválido ou expirado'
             )
         return payload
-

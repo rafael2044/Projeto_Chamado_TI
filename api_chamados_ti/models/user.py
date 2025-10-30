@@ -1,7 +1,7 @@
 from typing import List
-
 from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 
 from api_chamados_ti.db.database import Base
 

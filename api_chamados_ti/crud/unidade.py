@@ -10,13 +10,14 @@ from api_chamados_ti.models.unidade import Unidade
 
 class CRUDUnidade:
 
+
     def get_unidades(
             self,
             session: Session,
             offset: int = 1,
             limit: int = 100,
             search: str = ''
-        ) -> list[Unidade]:
+    ) -> list[Unidade]:
         skip = (offset - 1) * limit
         smtm = select(Unidade).offset(skip).limit(limit)
         if search:
@@ -26,7 +27,8 @@ class CRUDUnidade:
                     .limit(limit))
         
         return session.scalars(smtm).all()
-    
+
+
     def get_total_unidades(self, session: Session, search: str = '') -> int:
         smtm = select(Unidade)
         if search:
@@ -35,8 +37,12 @@ class CRUDUnidade:
         total = session.execute(select(func.count()).select_from(smtm)).scalar()
         return total
 
+
     def get_unidade_by_id(self, session: Session, unidade_id: int) -> Unidade:
-        unidade_db = session.scalars(select(Unidade).where(Unidade.id == unidade_id)).first()
+        unidade_db = session.scalars(
+            select(Unidade)
+            .where(Unidade.id == unidade_id)
+        ).first()
         if not unidade_db:
             raise HTTPException(
                 status_code=HTTPStatus.NOT_FOUND,
@@ -45,6 +51,7 @@ class CRUDUnidade:
 
         return unidade_db
     
+
     def exists_unidade(self, session: Session, nome: str) -> bool:
         unidade_db = session.scalars(
             select(Unidade)
@@ -52,7 +59,8 @@ class CRUDUnidade:
         if not unidade_db:
             return False
         return True
-    
+
+
     def insert_unidade(self, session: Session, unidade: UnidadeRequest) -> Unidade:
         if self.exists_unidade(session, unidade.nome):
             raise HTTPException(

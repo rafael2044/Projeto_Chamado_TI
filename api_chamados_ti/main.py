@@ -17,7 +17,10 @@ from api_chamados_ti.core.exception_handlers import db_connection_exception_hand
 Base.metadata.create_all(bind=engine)
 
 
-app = FastAPI(title='FastAPI Login System')
+app = FastAPI(
+    title='API de Chamados de T.I',
+    description='API destinada a cadastrar e consultar chamados de T.I',
+    version='0.1.0')
 
 app.add_exception_handler(OperationalError, db_connection_exception_handler)
 

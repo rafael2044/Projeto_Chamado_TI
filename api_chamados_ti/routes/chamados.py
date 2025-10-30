@@ -1,18 +1,15 @@
 import os
 from http import HTTPStatus
-
-from datetime import datetime
-from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, UploadFile
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
+
 from api_chamados_ti.core.security import JWTBearer, get_current_user, require_privilegio
 from api_chamados_ti.db.database import get_session
-from api_chamados_ti.models.chamado import Chamado
 from api_chamados_ti.models.user import User
 from api_chamados_ti.crud.chamado import crud_chamado as crud
 from api_chamados_ti.schemas.chamadoRequest import ChamadoRequest
-from api_chamados_ti.schemas.chamadoResponse import ChamadoResponse
 from api_chamados_ti.schemas.chamadosResponse import ChamadosResponse
 
 
@@ -20,7 +17,7 @@ router = APIRouter(prefix='/chamados', tags=['Chamados'])
 
 UPLOAD_DIR = 'uploads/'
 
-# Certifique-se de criar o diretório 'uploads' se ainda não existir
+
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 
@@ -30,7 +27,7 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
     dependencies=[Depends(JWTBearer())],
     status_code=HTTPStatus.OK
 )
-def listar_chamados(session: Session = Depends(get_session), offset: int = 1, limit: int = 10, search: str = ''):
+def get_chamados(session: Session = Depends(get_session), offset: int = 1, limit: int = 10, search: str = ''):
     chamados = crud.get_chamados(session, offset=offset, limit=limit, search=search)
     total = crud.get_total_chamados(session, search=search)
     result = []
@@ -38,9 +35,9 @@ def listar_chamados(session: Session = Depends(get_session), offset: int = 1, li
         result.append({
             'id': c.id,
             'titulo': c.titulo,
-            'unidade': c.unidade.nome if c.unidade else '—',
+            'unidade': c.unidade.nome if c.unidade else '———',
             'setor': c.setor,
-            'modulo': c.modulo.nome if c.modulo else '—',
+            'modulo': c.modulo.nome if c.modulo else '———',
             'urgencia': c.urgencia,
             'descricao': c.descricao,
             'status': c.status.nome,
@@ -53,7 +50,7 @@ def listar_chamados(session: Session = Depends(get_session), offset: int = 1, li
                     'id': a.id,
                     'descricao': a.descricao,
                     'data_atendimento': a.data_atendimento,
-                    'suporte': a.suporte.username if a.suporte else None,
+                    'suporte': a.suporte.username if a.suporte else 'Desconhecido',
                     'anexo': True if a.anexo else False
                 }
                 for a in (c.atendimentos or [])
@@ -69,16 +66,17 @@ def listar_chamados(session: Session = Depends(get_session), offset: int = 1, li
 
 
 @router.get('/{chamado_id}/anexo')
-def get_anexo(chamado_id: int, session: Session = Depends(get_session)):
+def get_anexo_chamado(chamado_id: int, session: Session = Depends(get_session)):
     anexo = crud.get_anexo_chamado(session, chamado_id)
     return FileResponse(path=anexo.get('caminho'), filename=f'anexo-chamado-{chamado_id}.{anexo.get('tipo')}')
+
 
 @router.post(
     '/',
     dependencies=[Depends(JWTBearer())],
     status_code=HTTPStatus.CREATED
 )
-def criar_chamado(
+def create_chamado(
     chamado: ChamadoRequest,
     session: Session = Depends(get_session),
     current_user: User = Depends(get_current_user)
@@ -88,12 +86,12 @@ def criar_chamado(
 
 
 @router.post('/{chamado_id}/anexo', dependencies=[Depends(JWTBearer())], status_code=HTTPStatus.CREATED)
-async def upload_anexo(
+async def upload_anexo_chamado(
     chamado_id: int,
     file: UploadFile = File(...),
     session: Session = Depends(get_session)
 ):
-    chamado_db = await crud.insert_anexo_chamado(session, file, chamado_id)
+    await crud.insert_anexo_chamado(session, file, chamado_id)
     
     session.commit()
 

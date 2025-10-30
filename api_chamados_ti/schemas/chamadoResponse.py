@@ -1,12 +1,14 @@
 from datetime import datetime
 from typing import Optional
+from pydantic import BaseModel, ConfigDict
 
-from pydantic import BaseModel
 
 from api_chamados_ti.schemas.atendimentoResponse import AtendimentoResponse
 
 
 class ChamadoResponse(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+
     id: int
     titulo: str
     unidade: str
@@ -21,5 +23,3 @@ class ChamadoResponse(BaseModel):
     solicitante: str
     atendimentos: Optional[list[AtendimentoResponse]] = []
 
-    class Config:
-        orm_mode = True

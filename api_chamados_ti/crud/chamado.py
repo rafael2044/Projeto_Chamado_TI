@@ -3,7 +3,6 @@ from sqlalchemy.orm import Session, joinedload, selectinload
 from fastapi import HTTPException
 from fastapi import UploadFile
 from http import HTTPStatus
-from datetime import datetime
 import os
 
 
@@ -20,7 +19,7 @@ class CRUDChamado:
             offset: int = 1,
             limit: int = 10,
             search: str = ''
-        ) -> list[Chamado]:
+    ) -> list[Chamado]:
         
         skip = (offset - 1) * limit
         smtm = (
@@ -47,7 +46,8 @@ class CRUDChamado:
         
     
         return session.scalars(smtm).all()
-    
+
+
     def get_total_chamados(self, session: Session, search: str = ''):
         smtm = select(Chamado)
         if search:
@@ -55,6 +55,7 @@ class CRUDChamado:
 
         total = session.execute(select(func.count()).select_from(smtm)).scalar()
         return total
+
 
     def get_chamado_by_id(self, session: Session, chamado_id: int) -> Chamado:
         chamado_db = session.scalars(select(Chamado).where(Chamado.id == chamado_id)).first()
@@ -65,7 +66,8 @@ class CRUDChamado:
             )
 
         return chamado_db
-    
+
+
     def exists_chamado(self, session: Session, chamado_id: int) -> bool:
         chamado_db = session.scalars(
             select(Chamado)
@@ -73,7 +75,8 @@ class CRUDChamado:
         if not chamado_db:
             return False
         return True
-    
+
+
     def insert_chamado(self, session: Session, chamado: ChamadoRequest, user_id: int) -> Chamado:
         novo_chamado = Chamado(
             titulo=chamado.titulo,
@@ -118,11 +121,25 @@ class CRUDChamado:
             raise e
         return chamado_db
 
-    def finalizar_chamado(self, session: Session, chamado_id: int):
-        chamado_update = self.update_chamado(session, chamado_id, {'status_id': 3, 'data_fechamento': datetime.now()})
+
+    def finalizar_chamado(self, session: Session, chamado_id: int) -> Chamado:
+        chamado_update = self.update_chamado(
+            session, 
+            chamado_id, 
+            {
+                'status_id': 3,
+                'data_fechamento': func.now()
+            }
+        )
         return chamado_update
 
-    async def insert_anexo_chamado(self, session: Session, file: UploadFile, chamado_id:int):
+
+    async def insert_anexo_chamado(
+            self,
+            session: Session,
+            file: UploadFile,
+            chamado_id:int
+    ) -> Chamado:
         chamado_db = self.get_chamado_by_id(session, chamado_id)
 
         allowed_extensions = ['.jpg', '.jpeg', '.png', '.pdf']
@@ -141,6 +158,7 @@ class CRUDChamado:
         
         return chamado_db
 
+
     def get_anexo_chamado(self, session: Session, chamado_id: int) -> dict:
         chamado_db = self.get_chamado_by_id(session, chamado_id)
 
@@ -154,5 +172,6 @@ class CRUDChamado:
             "caminho": chamado_db.caminho_anexo,
             "tipo": chamado_db.tipo_anexo
         }
+
 
 crud_chamado = CRUDChamado()
