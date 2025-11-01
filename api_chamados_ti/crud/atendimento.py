@@ -3,9 +3,9 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException, UploadFile, File
 from http import HTTPStatus
 import os
+import cloudinary.uploader
 
 from api_chamados_ti.models.atendimento import Atendimento
-from api_chamados_ti.models.anexo_atendimento import AnexoAtendimento
 from api_chamados_ti.crud.chamado import crud_chamado
 
 UPLOAD_DIR = 'uploads/'
@@ -62,7 +62,7 @@ class CRUDAtendimento:
         return True
 
 
-    async def insert_atendimento(
+    def insert_atendimento(
             self, session: Session,
             descricao: str,
             chamado_id: int, 
@@ -71,73 +71,41 @@ class CRUDAtendimento:
     ) -> Atendimento:
         chamado_db = crud_chamado.get_chamado_by_id(session, chamado_id)
         if chamado_db.status_id != 3:
-            
             new_atendimento = Atendimento(
                 descricao=descricao,
                 chamado_id=chamado_db.id,
                 suporte_id=suporte_id,
             )
+            if anexo:
+                try:
+                    upload_result: dict = cloudinary.uploader.upload(
+                        anexo.file,
+                        resource_type='auto',
+                        type="upload",
+                        folder="anexo_atendimentos",
+                        use_filename=True,
+                        unique_filename=True
+                    )
+
+                    url_anexo = upload_result.get("secure_url")
+
+                    new_atendimento.url_anexo = url_anexo
+
+                except Exception as e:
+                    raise HTTPException(
+                        status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
+                        detail='Erro no sistema de upload'
+                    )
+                
             session.add(new_atendimento)
             session.commit()
             session.refresh(new_atendimento)
-            if anexo:
-                await self.insert_anexo_atendimento(session, new_atendimento.id,
-                                                chamado_id, anexo)
-                session.refresh(new_atendimento)
-
-            if chamado_db.status_id == 1:
-                crud_chamado.update_chamado(session, chamado_id,
-                                            {"status_id": 2})
             return new_atendimento
         else:   
             raise HTTPException(
                 status_code=HTTPStatus.CONFLICT,
                 detail="O chamado já está finalizado!"
             )
-
-    
-    async def insert_anexo_atendimento(
-            self, 
-            session: Session,
-            atendimento_id: int, 
-            chamado_id: int,
-            anexo: UploadFile | None = File(None)
-        ) -> Atendimento:
-        
-        allowed_extensions = ['.jpg', '.jpeg', '.png', '.pdf']
-        file_ext = os.path.splitext(anexo.filename)[1].lower()
-        if file_ext not in allowed_extensions:
-            raise HTTPException(status_code=400, detail='Formato de arquivo não permitido')
-
-        save_path = os.path.join(UPLOAD_DIR, f'chamado_{chamado_id}_{anexo.filename}')
-
-        with open(save_path, 'wb') as f:
-            content = await anexo.read()
-            f.write(content)
-
-        new_anexo = AnexoAtendimento(
-            atendimento_id=atendimento_id,
-            caminho=save_path,
-            tipo=file_ext
-        )  
-        session.add(new_anexo)
-        session.commit()
-    
-        return new_anexo
-
-
-    def get_anexo_atendimento(self, session: Session, atendimento_id: int) -> AnexoAtendimento:
-        anexo = session.scalar(
-            select(AnexoAtendimento).where(AnexoAtendimento.atendimento_id == atendimento_id)
-            )
-        
-        if not os.path.isfile(anexo.caminho):
-            raise HTTPException(
-                status_code=HTTPStatus.NOT_FOUND,
-                detail="Arquivo não existe"
-            )
-        
-        return anexo
        
 
 crud_atendimento = CRUDAtendimento()

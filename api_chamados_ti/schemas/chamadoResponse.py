@@ -17,7 +17,7 @@ class ChamadoResponse(BaseModel):
     urgencia: str
     descricao: str
     status: str
-    anexo: bool
+    url_anexo: Optional[str] = None
     data_abertura: datetime
     data_fechamento: Optional[datetime] = None
     solicitante: str

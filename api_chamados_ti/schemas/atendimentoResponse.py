@@ -1,5 +1,6 @@
 from datetime import datetime
 from pydantic import BaseModel, ConfigDict
+from typing import Optional
 
 
 class AtendimentoResponse(BaseModel):
@@ -9,5 +10,5 @@ class AtendimentoResponse(BaseModel):
     suporte: str
     descricao: str
     data_atendimento: datetime
-    anexo: bool = False
+    url_anexo: Optional[str] = None
     
