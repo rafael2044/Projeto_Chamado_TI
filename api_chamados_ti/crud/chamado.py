@@ -4,6 +4,7 @@ from fastapi import HTTPException
 from fastapi import UploadFile
 from http import HTTPStatus
 import os
+import cloudinary.uploader
 
 
 from api_chamados_ti.schemas.chamadoRequest import ChamadoRequest
@@ -140,37 +141,40 @@ class CRUDChamado:
             file: UploadFile,
             chamado_id:int
     ) -> Chamado:
-        chamado_db = self.get_chamado_by_id(session, chamado_id)
+        if self.get_chamado_by_id(session, chamado_id):
+            try:
+                upload_result: dict = cloudinary.uploader.upload(
+                    file.file,
+                    resource_type='auto',
+                    type="upload",
+                    folder="anexo_chamados",
+                    use_filename=True,
+                    unique_filename=True
+                )
 
-        allowed_extensions = ['.jpg', '.jpeg', '.png', '.pdf']
-        file_ext = os.path.splitext(file.filename)[1].lower()
-        if file_ext not in allowed_extensions:
-            raise HTTPException(status_code=400, detail='Formato de arquivo não permitido')
+                url_anexo = upload_result.get("secure_url")
+            except Exception as e:
+                raise HTTPException(
+                    status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
+                    detail='Erro no sistema de upload'
+                )
 
-        save_path = os.path.join(UPLOAD_DIR, f'chamado_{chamado_id}_{file.filename}')
+            chamado_db = self.update_chamado(session, chamado_id, {'url_anexo': url_anexo})
 
-        with open(save_path, 'wb') as f:
-            content = await file.read()
-            f.write(content)
-
-        chamado_db.caminho_anexo = save_path
-        chamado_db.tipo_anexo = file_ext
-        
-        return chamado_db
+            return chamado_db
 
 
     def get_anexo_chamado(self, session: Session, chamado_id: int) -> dict:
         chamado_db = self.get_chamado_by_id(session, chamado_id)
 
-        if not os.path.isfile(chamado_db.caminho_anexo):
+        if not chamado_db.caminho_anexo:
             raise HTTPException(
                 status_code=HTTPStatus.NOT_FOUND,
                 detail="Arquivo não existe"
             )
         
         return {
-            "caminho": chamado_db.caminho_anexo,
-            "tipo": chamado_db.tipo_anexo
+            "url": chamado_db.caminho_anexo,
         }
 
 

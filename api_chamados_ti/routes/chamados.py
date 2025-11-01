@@ -1,7 +1,5 @@
-import os
 from http import HTTPStatus
 from fastapi import APIRouter, Depends, File, UploadFile
-from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from zoneinfo import ZoneInfo
 
@@ -17,10 +15,6 @@ from api_chamados_ti.schemas.chamadosResponse import ChamadosResponse
 router = APIRouter(prefix='/chamados', tags=['Chamados'])
 TARGET_TIMEZONE = ZoneInfo('America/Sao_Paulo')
 
-UPLOAD_DIR = 'uploads/'
-
-
-os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 
 @router.get(
@@ -43,7 +37,7 @@ def get_chamados(session: Session = Depends(get_session), offset: int = 1, limit
             'urgencia': c.urgencia,
             'descricao': c.descricao,
             'status': c.status.nome,
-            'anexo': True if c.caminho_anexo else False,
+            'url_anexo': c.url_anexo,
             'data_abertura': c.data_abertura.astimezone(TARGET_TIMEZONE),
             'data_fechamento': c.data_fechamento.astimezone(TARGET_TIMEZONE) if c.data_fechamento else None,
             'solicitante': c.usuario.username if c.usuario else 'Desconhecido',
@@ -53,7 +47,7 @@ def get_chamados(session: Session = Depends(get_session), offset: int = 1, limit
                     'descricao': a.descricao,
                     'data_atendimento': a.data_atendimento.astimezone(TARGET_TIMEZONE),
                     'suporte': a.suporte.username if a.suporte else 'Desconhecido',
-                    'anexo': True if a.anexo else False
+                    'url_anexo': a.url_anexo
                 }
                 for a in (c.atendimentos or [])
             ]
@@ -65,12 +59,6 @@ def get_chamados(session: Session = Depends(get_session), offset: int = 1, limit
         'limit': limit,
         'total_pages': (total + limit - 1) // limit
         }
-
-
-@router.get('/{chamado_id}/anexo')
-def get_anexo_chamado(chamado_id: int, session: Session = Depends(get_session)):
-    anexo = crud.get_anexo_chamado(session, chamado_id)
-    return FileResponse(path=anexo.get('caminho'), filename=f'anexo-chamado-{chamado_id}.{anexo.get('tipo')}')
 
 
 @router.post(
@@ -94,8 +82,6 @@ async def upload_anexo_chamado(
     session: Session = Depends(get_session)
 ):
     await crud.insert_anexo_chamado(session, file, chamado_id)
-    
-    session.commit()
 
     return {'message': 'Arquivo enviado com sucesso'}
 

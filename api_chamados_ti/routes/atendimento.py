@@ -1,7 +1,6 @@
 import os
 from http import HTTPStatus
 from fastapi import APIRouter, Depends, File, Form, UploadFile
-from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from zoneinfo import ZoneInfo
 
@@ -34,23 +33,14 @@ async def insert_atendimento(
     session: Session = Depends(get_session),
     current_user: User = Depends(get_current_user)
 ):
-    new_atendimento = await crud.insert_atendimento(
+    new_atendimento = crud.insert_atendimento(
         session, descricao, chamado_id, current_user.id, anexo)
     return {
         'id': new_atendimento.id,
         'suporte': current_user.username,
         'descricao': new_atendimento.descricao,
         'data_atendimento': new_atendimento.data_atendimento.astimezone(TARGET_TIMEZONE),
-        'anexo': True if new_atendimento.anexo else False
+        'url_anexo': new_atendimento.url_anexo
     }
 
-
-@router.get('/{atendimento_id}/anexo',
-           dependencies=[Depends(JWTBearer())]
-           )
-def get_anexo_atendimento(atendimento_id: int, session: Session = Depends(get_session)):
-    
-    anexo = crud.get_anexo_atendimento(session, atendimento_id)
-    
-    return FileResponse(path=anexo.caminho, filename=f'anexo-{anexo.id}-{anexo.atendimento.suporte.username}.{anexo.tipo}')
     

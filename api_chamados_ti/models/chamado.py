@@ -36,8 +36,7 @@ class Chamado(Base):
         default=func.now()
     )
     data_fechamento: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
-    caminho_anexo: Mapped[str] = mapped_column(nullable=True)
-    tipo_anexo: Mapped[str] = mapped_column(String(20), nullable=True)
+    url_anexo: Mapped[str] = mapped_column(nullable=True)
 
     unidade: Mapped['Unidade'] = relationship(back_populates='chamados')
     modulo: Mapped['Modulo'] = relationship(back_populates='chamados')

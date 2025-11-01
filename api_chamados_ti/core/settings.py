@@ -8,3 +8,6 @@ class Settings(BaseSettings):
 
     DATABASE_URL: str
     SECRET_KEY: str
+    CLOUD_NAME: str
+    CLOUD_API_KEY: str
+    CLOUD_SECRET_KEY: str

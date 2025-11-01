@@ -13,6 +13,7 @@ class Atendimento(Base):
     chamado_id: Mapped[int] = mapped_column(ForeignKey('chamado.id'), nullable=False)
     suporte_id: Mapped[int] = mapped_column(ForeignKey('user.id'), nullable=True)
     descricao: Mapped[str] = mapped_column(Text, nullable=False)
+    url_anexo: Mapped[str] = mapped_column(nullable=True)
     data_atendimento: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=func.now(),
@@ -21,8 +22,5 @@ class Atendimento(Base):
 
     suporte: Mapped['User'] = relationship(back_populates='atendimentos')
     chamado: Mapped['Chamado'] = relationship(back_populates='atendimentos')
-    anexo: Mapped['AnexoAtendimento'] = relationship(back_populates='atendimento')
-
 
 from api_chamados_ti.models.chamado import Chamado
-from api_chamados_ti.models.anexo_atendimento import AnexoAtendimento

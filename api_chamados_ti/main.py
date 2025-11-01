@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from sqlalchemy.exc import OperationalError
 from fastapi.middleware.cors import CORSMiddleware
 
+
+import api_chamados_ti.core.config
 from api_chamados_ti.db.database import Base, engine
 from api_chamados_ti.routes import (
     atendimento,
@@ -26,6 +28,8 @@ app.add_exception_handler(OperationalError, db_connection_exception_handler)
 
 origins = [
     'http://localhost:3000',
+    'http://192.168.15.6:3000',
+    'http://192.168.15.18:3000'
     'http://127.0.0.1:3000',
     'https://projeto-chamado-ti-dqry.vercel.app'
 ]

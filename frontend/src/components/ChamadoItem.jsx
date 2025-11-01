@@ -59,18 +59,16 @@ function ChamadoItem({ chamado,
             {new Date(chamado.data_abertura).toLocaleString()}
           </p>
 
-          {chamado.anexo &&(
+          {chamado.url_anexo &&(
             <div>
-              <button
-                type="button"
-                className="btn btn-primary btn-sm"
-                onClick={(e) => {
-                  e.stopPropagation(); // evita fechar/abrir accordion ao clicar no botão
-                  handlerDownloadAnexoChamado(chamado.id);
-                }}
+              <a
+                className="fs-6"
+                href={chamado.url_anexo} 
+                target="_blank" 
+                rel="noopener noreferrer"
               >
-                Baixar Anexo do Chamado 
-              </button>
+                Ver anexo do Chamado
+              </a>
             </div>
           )}
 
@@ -133,19 +131,16 @@ function ChamadoItem({ chamado,
                         {a.suporte || "Sem suporte"}
                       </span>
                     </div>
-                    {a.anexo && (
+                    {a.url_anexo && (
                       <div>
-                        <button
-                          type="button"
-                          className="btn btn-primary btn-sm"
-                          disabled={isLoading}
-                          onClick={(e) => {
-                            e.stopPropagation(); // evita fechar/abrir accordion ao clicar no botão
-                            handlerDownloadAnexo(a.id);
-                          }}
+                        <a
+                          className="fs-6"
+                          href={a.url_anexo} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
                         >
-                          Baixar Anexo  
-                        </button>
+                          Ver anexo do atendimento
+                        </a>
                       </div>
                     )}
                   </li>

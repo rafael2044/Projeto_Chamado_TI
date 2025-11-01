@@ -30,7 +30,7 @@ const Login = () => {
       setIsLoading(false);
     } catch (err) {
       console.error(err);
-      showToast("Falha no login: Usuário ou Senha incorreta", "error")
+      showToast(`Erro no login: ${err}`, "error")
     }finally{
       setIsLoading(false);
     }
